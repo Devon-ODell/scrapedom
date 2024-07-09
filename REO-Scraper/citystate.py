@@ -21,13 +21,14 @@ user_agent = user_agent_rotator.get_random_user_agent()
 # Set up Chrome options
 chrome_options = Options()
 chrome_options.add_argument(f'user-agent={user_agent}')
+chrome_options.add_argument("--headless=new")
 service = Service(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
 actions = ActionChains(driver)
 
 def random_wait():
-    time.sleep(random.randint(7, 12))
+    time.sleep(random.randint(4, 9))
 
 def scroll_down():
     actions.send_keys(Keys.PAGE_DOWN).perform()
@@ -59,8 +60,8 @@ df['Full Address'] = ''
 
 # Iterate over each row and search for the full address
 for index, row in df.iterrows():
-    business_name = row[0]
-    street_address = row[1]
+    business_name = row['Name']
+    street_address = row["Address"]
     full_address = search_business_and_address(business_name, street_address)
     df.at[index, 'Full Address'] = full_address
     print(f"Completed: {business_name}, {street_address} -> {full_address}")
@@ -71,7 +72,7 @@ for index, row in df.iterrows():
         print(f"Partial save completed: {partial_output_path}")
 
 # Save the updated dataframe back to a new CSV file
-output_csv_file_path = 'reo-tx-finalecsv'
+output_csv_file_path = 'reo-tx-final.csv'
 df.to_csv(output_csv_file_path, index=False)
 
 driver.quit()
